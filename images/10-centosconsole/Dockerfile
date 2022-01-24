@@ -1,4 +1,4 @@
-FROM rancher/os-centosconsole-base
+FROM benok/os-centosconsole-base
 # FROM amd64=centos:7.7.1908 arm64=arm64v8/centos:7
 
 COPY prompt.sh /etc/profile.d/

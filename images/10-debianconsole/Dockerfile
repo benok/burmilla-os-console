@@ -1,4 +1,4 @@
-FROM rancher/os-debianconsole-base
+FROM benok/os-debianconsole-base
 # FROM amd64=debian:stretch arm64=arm64v8/debian:stretch
 
 COPY build/sshd_config.append.tpl /etc/ssh/

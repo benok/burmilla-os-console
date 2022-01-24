@@ -1,4 +1,4 @@
-FROM rancher/os-ubuntuconsole-base
+FROM benok/os-ubuntuconsole-base
 # FROM amd64=ubuntu:bionic arm64=arm64v8/ubuntu:bionic
 
 COPY build/sshd_config.append.tpl /etc/ssh/

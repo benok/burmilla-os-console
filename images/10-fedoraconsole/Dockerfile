@@ -1,4 +1,4 @@
-FROM rancher/os-fedoraconsole-base
+FROM benok/os-fedoraconsole-base
 # FROM amd64=fedora:31 arm64=arm64v8/fedora:31
 
 COPY prompt.sh /etc/profile.d/

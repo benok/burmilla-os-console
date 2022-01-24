@@ -1,5 +1,5 @@
 console:
-  image: ${REGISTRY_DOMAIN}/rancher/os-centosconsole:v1.5.5${SUFFIX}
+  image: ${REGISTRY_DOMAIN}/benok/os-centosconsole:latest${SUFFIX}
   command: ros console-init
   privileged: true
   labels:
