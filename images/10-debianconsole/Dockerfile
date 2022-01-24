@@ -2,6 +2,7 @@ FROM benok/os-debianconsole-base
 # FROM amd64=debian:buster arm64=arm64v8/buster:stable
 
 COPY build/sshd_config.append.tpl /etc/ssh/
+COPY build/generate-lsb-release /etc/init.d/
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends iptables openssh-server rsync locales \

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $1 != "start" ]; then
+  exit 0
+fi
+
+OSNAME=$(ros -v | sudo ros -v | sed -e 's!.*image !!' -e 's!/.*!!')
+VERSION=$(ros -v | awk '{print $2}')
+
+
+cat > /etc/lsb-release <<EOF
+DISTRIB_ID=${OSNAME^}OS
+DISTRIB_RELEASE=${VERSION}
+DISTRIB_DESCRIPTION="${OSNAME^}OS ${VERSION}"
+EOF
+
+echo /etc/lsb-release generated
