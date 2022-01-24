@@ -1,5 +1,6 @@
-# os-images
-Docker Images for RancherOS
+# unofficial Burmilla OS console images
+Docker console Images for BurmillaOS (work in progress)
+(forked from racher/os-services:v1.5.8)
 
 ## Building
 
@@ -35,9 +36,3 @@ ENTRYPOINT ["/usr/bin/ros", "entrypoint"]
 ## Misc details
 
 The sshd is configured to accept logins from users in the `docker` group, and `root` is denied.
-
-## Contact
-For bugs, questions, comments, corrections, suggestions, etc., open an issue in
- [rancher/os](//github.com/rancher/os/issues) with a title starting with `[os-images] `.
-
-Or just [click here](//github.com/rancher/os/issues/new?title=%5Bos-images%5D%20) to create a new issue.
