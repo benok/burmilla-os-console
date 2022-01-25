@@ -5,7 +5,7 @@ Docker console Images for BurmillaOS. (work in progress)
 
 ## Background
 
-[BurmillaOS](https://burmillaos.org/) chooses Debian console as the default console & [doesn't support any other consoles](https://github.com/burmilla/os-services/commit/be9ad101725d7d56adc6849990ba4a99fa26c4de) like Alpine, Ubuntu, CentOS that can be used on RancherOS.
+[BurmillaOS](https://burmillaos.org/) chooses [Debian console as the default](https://github.com/burmilla/os/issues/9) console & [doesn't support any other consoles](https://github.com/burmilla/os-services/commit/be9ad101725d7d56adc6849990ba4a99fa26c4de) like Alpine, Ubuntu, CentOS that can be used on RancherOS.
 
 But, Burmilla's Debian based default console is [based on **slim** container](https://github.com/burmilla/os/blob/v1.9.x/images/02-console/Dockerfile). 
 
@@ -57,7 +57,6 @@ rancher@burmilla:~$ sudo reboot
 
 See also
 * [How to switch console](https://burmillaos.org/docs/installation/custom-builds/custom-console/)
-* [Creating your own console](https://burmillaos.org/docs/system-services/custom-system-services/#creating-your-own-console)
 
 ### Note:
 Please use **'ros console enable'** and reboot.
@@ -74,7 +73,7 @@ Any other console is the same image as RancherOS v1.5.8.
 
 ## Notes on Debian console
 * based on non-slim image
-* uses buster as Burmilla's default console uses
+* uses buster as Burmilla's default console uses ([burmilla/os/#111](https://github.com/burmilla/os/pull/111))
 * Followed [most of the upstream changes](https://github.com/benok/burmilla-os-console/commit/aa5b21ec7a150ca35cf57ec576e765a2d6a08530)
 * ssh configuration is not changed from RancherOS's now. (I want to update this to recent Debian's default.)
 * If you want to generate /etc/lsb-release as the default console, add "/etc/init.d/generate-lsb-release start" to runcmd.
@@ -103,6 +102,8 @@ $ docker image push [your-account]/os-xxxxconsole -a
 ```
 6. Push changes to github and follow "How to Use".(changing url is required, of course.)
 
+See also
+* [Creating your own console](https://burmillaos.org/docs/system-services/custom-system-services/#creating-your-own-console)
 ---
 ## Original Build Instructions (from [rancher/os-services](https://github.com/rancher/os-services#readme))
 
