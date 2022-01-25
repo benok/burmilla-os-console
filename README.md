@@ -5,7 +5,7 @@ Docker console Images for BurmillaOS. (work in progress)
 
 ## Background
 
-[BurmillaOS](https://burmillaos.org/) chooses debian console as the default console & [doesn't support any other consoles](https://github.com/burmilla/os-services/commit/be9ad101725d7d56adc6849990ba4a99fa26c4de) like Alpine, Ubuntu, CentOS that can be used on RancherOS.
+[BurmillaOS](https://burmillaos.org/) chooses Debian console as the default console & [doesn't support any other consoles](https://github.com/burmilla/os-services/commit/be9ad101725d7d56adc6849990ba4a99fa26c4de) like Alpine, Ubuntu, CentOS that can be used on RancherOS.
 
 But, Burmilla's Debian based default console is [based on **slim** container](https://github.com/burmilla/os/blob/v1.9.x/images/02-console/Dockerfile). 
 
@@ -13,7 +13,7 @@ I think, slim container is intended to be used as a base of application containe
 
 ## How to Use
 
-Add following settings to your cloud-init.yml to refer console image from this repository.
+Add the following settings to your cloud-init.yml to refer console image from this repository.
 
 (You can use [ros config](https://burmillaos.org/docs/configuration/), or directly edit /var/lib/rancher/conf/cloud-config.d/user_config.yml with sudo.)
 
@@ -24,7 +24,7 @@ rancher:
       url: https://raw.githubusercontent.com/benok/burmilla-os-console/master
 ```
 
-With above setting, you can find other consoles as like RancherOS.
+With the above setting, you can find other consoles as like RancherOS.
 ```sh
 rancher@burmilla:~$ sudo ros console list
 disabled alpine
@@ -50,7 +50,7 @@ Digest: sha256:5f8ec5e744b082aff176774827aac3385205dc15468a12f36f83214a97de75d6
 Status: Downloaded newer image for benok/os-debianconsole:latest
 ```
 
-After reboot, your console now switched to the one you choose.
+After reboot, your console is now switched to the one you choose.
 ```sh
 rancher@burmilla:~$ sudo reboot
 ```
@@ -66,16 +66,16 @@ Please use **'ros console enable'** and reboot.
 
 ## Warning
 
-Currently, **only debian console is tested**.
+Currently, **only Debian console is tested**.
 
-Any other console is same image as RancherOS v1.5.8.
+Any other console is the same image as RancherOS v1.5.8.
 
-(I'm a debian user. I might update other consoles, but pull requests are welcome.)
+(I'm a Debian user. I might update other consoles, but pull requests are welcome.)
 
 ## Notes on Debian console
 * based on non-slim image
 * uses buster as Burmilla's default console uses
-* Followed [most of upstream changes](https://github.com/benok/burmilla-os-console/commit/aa5b21ec7a150ca35cf57ec576e765a2d6a08530)
+* Followed [most of the upstream changes](https://github.com/benok/burmilla-os-console/commit/aa5b21ec7a150ca35cf57ec576e765a2d6a08530)
 * ssh configuration is not changed from RancherOS's now. (I want to update this to recent Debian's default.)
 * If you want to generate /etc/lsb-release as the default console, add "/etc/init.d/generate-lsb-release start" to runcmd.
 ```yml
@@ -97,11 +97,11 @@ runcmd:
 2. Change [OS_REPO](https://github.com/benok/burmilla-os-console/commit/ce9e7f073012195d1b9fba1bef2e758050a9f97f) and [yaml's docker registry config](https://github.com/benok/burmilla-os-console/commit/dffea9b5f9717b845560e8366e3fc61dd99f29e0) to your Docker Hub account.
 3. make
 4. Change images/10-*console/Dockerfile
-5. Push all your images to dockerhub.
+5. Push all your images to Docker Hub.
 ```sh
 $ docker image push [your-account]/os-xxxxconsole -a
 ```
-6. Push changes to github and follow "How to Use".(changing url is required, of cource.)
+6. Push changes to github and follow "How to Use".(changing url is required, of course.)
 
 ---
 ## Original Build Instructions (from [rancher/os-services](https://github.com/rancher/os-services#readme))
