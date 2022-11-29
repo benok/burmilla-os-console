@@ -1,5 +1,5 @@
 FROM benok/os-ubuntuconsole-base
-# FROM amd64=ubuntu:focal arm64=arm64v8/ubuntu:focal
+# FROM amd64=ubuntu:jammy arm64=arm64v8/ubuntu:jammy
 
 COPY build/sshd_config.append.tpl /etc/ssh/
 
