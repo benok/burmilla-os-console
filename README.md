@@ -65,9 +65,10 @@ Please use **'ros console enable'** and reboot.
 
 ## Warning
 
-Currently, **only Debian console is tested**.
+Currently, only Debian and Ubuntu console is tested.
+(And recently, debian_testing console has [an issue with "apt upgrade"](https://github.com/benok/burmilla-os-console/issues/1).)
 
-Any other console is the same image as RancherOS v1.5.8.
+*Any other console is the same image as RancherOS v1.5.8.*
 
 (I'm a Debian user. I might update other consoles, but pull requests are welcome.)
 
