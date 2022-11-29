@@ -2,6 +2,7 @@ FROM benok/os-ubuntuconsole-base
 # FROM amd64=ubuntu:jammy arm64=arm64v8/ubuntu:jammy
 
 COPY build/sshd_config.append.tpl /etc/ssh/
+COPY build/generate-lsb-release /etc/init.d/
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends iptables openssh-server rsync locales \
