@@ -1,6 +1,5 @@
 consoles:
 - alpine
-- centos
 - debian
 - debian_testing
 - fedora
