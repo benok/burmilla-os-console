@@ -5,7 +5,7 @@ Docker console Images for BurmillaOS. (work in progress)
 
 ## Background
 
-[BurmillaOS](https://burmillaos.org/) chooses [Debian console as the default](https://github.com/burmilla/os/issues/9) console & [doesn't support any other consoles](https://github.com/burmilla/os-services/commit/be9ad101725d7d56adc6849990ba4a99fa26c4de) like Alpine, Ubuntu, CentOS that can be used on RancherOS.
+[BurmillaOS](https://burmillaos.org/) chooses [Debian console as the default](https://github.com/burmilla/os/issues/9) console & [doesn't support any other consoles](https://github.com/burmilla/os-services/commit/be9ad101725d7d56adc6849990ba4a99fa26c4de) like Alpine, Ubuntu, Fedora that can be used on RancherOS.
 
 But, Burmilla's Debian based default console is [based on **slim** container](https://github.com/burmilla/os/blob/v1.9.x/images/02-console/Dockerfile). 
 
@@ -28,7 +28,6 @@ With the above setting, you can find other consoles as like RancherOS.
 ```sh
 rancher@burmilla:~$ sudo ros console list
 disabled alpine
-disabled centos
 disabled debian
 enabled default
 disabled fedora
@@ -69,14 +68,6 @@ When you develop new or build new image and want to update to latest, you may ne
 
 (Using `system-docker pull benok/os-*console` doesn't recreate console images.)
 
-## Warning
-
-Currently, **only Debian and Ubuntu console is tested**.
-
-**Any other console('s Dockerfile) is not updated** from RancherOS v1.5.8.
-
-(I'm a Debian/Ubuntu user. I might update other consoles, but pull requests are welcome.)
-
 ## Notes for Debian console
 * based on non-slim image
 * uses buster as Burmilla's default console uses ([burmilla/os/#111](https://github.com/burmilla/os/pull/111))
@@ -88,7 +79,7 @@ Currently, **only Debian and Ubuntu console is tested**.
 * Ubuntu official image is minimized, but not **unminimized** by intent. 
   * You can (unminimize easily)[https://askubuntu.com/a/1329222/383021].
   
-## Notes for both console
+## Notes for ubuntu/debian consoles
 * If you want to generate /etc/lsb-release as the default console, add "/etc/init.d/generate-lsb-release start" to runcmd.
 ```yml
 runcmd:
@@ -97,6 +88,11 @@ runcmd:
   -  ...)
   - /etc/init.d/generate-lsb-release start
 ```
+## Notes for other consoles
+* Just updated to the "latest".
+* Just confirmed no problem found within very basic usage. (package update/install, etc.)
+* Not tested well. (Because I don't use these consoles usually.)
+* Ceotos is deprecated.(Deprecated & have trouble around systemctl(/reboot))
 
 ### See also (my tickets)
 * [Making console container customizable #126](https://github.com/burmilla/os/issues/126)
