@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [ $# != 1 ]; then
+  echo "$0 [start|stop]"
+  exit 0
+fi
+
 if [ $1 != "start" ]; then
   exit 0
 fi
@@ -7,11 +12,17 @@ fi
 OSNAME=$(ros -v | sudo ros -v | sed -e 's!.*image !!' -e 's!/.*!!')
 VERSION=$(ros -v | awk '{print $2}')
 
+if [ -f /etc/lsb-release ]; then
+  if [ ! -L /etc/lsb-release ]; then
+    mv /etc/lsb-release /etc/lsb-release.distro
+  fi
+fi
 
-cat > /etc/lsb-release <<EOF
+cat > /etc/lsb-release.burmilla <<EOF
 DISTRIB_ID=${OSNAME^}OS
 DISTRIB_RELEASE=${VERSION}
 DISTRIB_DESCRIPTION="${OSNAME^}OS ${VERSION}"
 EOF
+ln -sf /etc/lsb-release.burmilla /etc/lsb-release
 
 echo /etc/lsb-release generated
