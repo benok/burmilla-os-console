@@ -94,7 +94,7 @@ runcmd:
 ```
 
 ## Notes on Ubuntu console
-* [based on 22.04(jammy)](https://github.com/benok/burmilla-os-console/blob/master/images/10-ubuntuconsole/Dockerfile#L2)
+* based on [latest](https://github.com/benok/burmilla-os-console/blob/master/images/10-ubuntuconsole/Dockerfile#L2)([22.04](https://hub.docker.com/_/ubuntu)).
 * Ubuntu official image is minimized, but not **unminimized** by intent. 
   * You can (unminimize easily)[https://askubuntu.com/a/1329222/383021].
 
