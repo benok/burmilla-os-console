@@ -62,12 +62,6 @@ Please use **'ros console enable'** and reboot.
 
 **'ros console switch' doesn't work correctly since [RancherOS era](https://github.com/rancher/os/issues?q=is%3Aissue+is%3Aopen+%22ros+console+switch%22).**
 
-#### Note for developer:
-
-When you develop new or build new image and want to update to latest, you may need to switch once to other console(e.g. `default`) and switch back, if not new image pulled collectly. 
-
-(Using `system-docker pull benok/os-*console` doesn't recreate console images.)
-
 ## Notes for Debian console
 * based on non-slim image
 * uses buster as Burmilla's default console uses ([burmilla/os/#111](https://github.com/burmilla/os/pull/111))
@@ -104,7 +98,7 @@ runcmd:
 1. Clone or fork this repository.
 2. Change [OS_REPO](https://github.com/benok/burmilla-os-console/commit/ce9e7f073012195d1b9fba1bef2e758050a9f97f) and [yaml's docker registry config](https://github.com/benok/burmilla-os-console/commit/dffea9b5f9717b845560e8366e3fc61dd99f29e0) to your Docker Hub account.
 3. Change or Add images/10-(name)console/Dockerfile
-4. If you add new one, add (n*)/(name).yml (*first letter of new console name)
+4. If you add new one, add (n*)/(name).yml (*first letter of new console name) and add entry to index.yml
 5. Build with `make` and debug
 6. Push all your images to Docker Hub and test. (`ros console` can't specify tag, only `latest` image can be used.)
 ```sh
@@ -112,7 +106,15 @@ $ docker image push [your-account]/os-(name)console -a
 ```
 6. Push changes to github and follow "How to Use".(changing url is required, of course.)
 
-See also
+#### some notes for developper
+
+* When you develop new or build new image and want to update to latest, you may need to switch once to other console(e.g. `default`) and switch back, if not new image pulled collectly. 
+
+* use `system-docker pull benok/os-*console` to pull updated image.
+
+* If you updated index.yml, x/xxx.yml, you may have to clear /var/lib/rancher/cache. (It's cached for a while)
+
+#### See also
 * [Creating your own console](https://burmillaos.org/docs/system-services/custom-system-services/#creating-your-own-console)
 ---
 ## Original Build Instructions (from [rancher/os-services](https://github.com/rancher/os-services#readme))
