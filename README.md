@@ -61,7 +61,7 @@ See also
 ### Note:
 Please use **'ros console enable'** and reboot.
 
-**'ros console switch' doesn't work correctly from [RancherOS era](https://github.com/rancher/os/issues?q=is%3Aissue+is%3Aopen+%22ros+console+switch%22).**
+**'ros console switch' doesn't work correctly since [RancherOS era](https://github.com/rancher/os/issues?q=is%3Aissue+is%3Aopen+%22ros+console+switch%22).**
 
 #### Note for developer:
 
@@ -73,17 +73,22 @@ When you develop new or build new image and want to update to latest, you may ne
 
 Currently, **only Debian and Ubuntu console is tested**.
 
-(But recently, *`debian_testing` console has [an issue with "apt upgrade"](https://github.com/benok/burmilla-os-console/issues/1).*)
-
 **Any other console('s Dockerfile) is not updated** from RancherOS v1.5.8.
 
 (I'm a Debian/Ubuntu user. I might update other consoles, but pull requests are welcome.)
 
-## Notes on Debian console
+## Notes for Debian console
 * based on non-slim image
 * uses buster as Burmilla's default console uses ([burmilla/os/#111](https://github.com/burmilla/os/pull/111))
 * Followed [most of the upstream changes](https://github.com/benok/burmilla-os-console/commit/aa5b21ec7a150ca35cf57ec576e765a2d6a08530)
 * ssh configuration is not changed from RancherOS's now. (I want to update this to recent Debian's default.)
+
+## Notes for Ubuntu console
+* based on [latest](https://github.com/benok/burmilla-os-console/blob/master/images/10-ubuntuconsole/Dockerfile#L2)([22.04](https://hub.docker.com/_/ubuntu)).
+* Ubuntu official image is minimized, but not **unminimized** by intent. 
+  * You can (unminimize easily)[https://askubuntu.com/a/1329222/383021].
+  
+## Notes for both console
 * If you want to generate /etc/lsb-release as the default console, add "/etc/init.d/generate-lsb-release start" to runcmd.
 ```yml
 runcmd:
@@ -92,11 +97,6 @@ runcmd:
   -  ...)
   - /etc/init.d/generate-lsb-release start
 ```
-
-## Notes on Ubuntu console
-* based on [latest](https://github.com/benok/burmilla-os-console/blob/master/images/10-ubuntuconsole/Dockerfile#L2)([22.04](https://hub.docker.com/_/ubuntu)).
-* Ubuntu official image is minimized, but not **unminimized** by intent. 
-  * You can (unminimize easily)[https://askubuntu.com/a/1329222/383021].
 
 ### See also (my tickets)
 * [Making console container customizable #126](https://github.com/burmilla/os/issues/126)
