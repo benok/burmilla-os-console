@@ -21,7 +21,7 @@ Add the following settings to your cloud-init.yml to refer console image from th
 rancher:
   repositories:
      console:
-      url: https://raw.githubusercontent.com/benok/burmilla-os-console/master
+       url: https://raw.githubusercontent.com/benok/burmilla-os-console/master
 ```
 
 With the above setting, you can find other consoles as like RancherOS.
@@ -63,14 +63,21 @@ Please use **'ros console enable'** and reboot.
 
 **'ros console switch' doesn't work correctly from [RancherOS era](https://github.com/rancher/os/issues?q=is%3Aissue+is%3Aopen+%22ros+console+switch%22).**
 
+#### Note for developer:
+
+When you develop new or build new image and want to update to latest, you may need to switch once to other console(e.g. `default`) and switch back, if not new image pulled collectly. 
+
+(Using `system-docker pull benok/os-*console` doesn't recreate console images.)
+
 ## Warning
 
-Currently, only Debian and Ubuntu console is tested.
-(And recently, debian_testing console has [an issue with "apt upgrade"](https://github.com/benok/burmilla-os-console/issues/1).)
+Currently, **only Debian and Ubuntu console is tested**.
 
-*Any other console is the same image as RancherOS v1.5.8.*
+(But recently, *`debian_testing` console has [an issue with "apt upgrade"](https://github.com/benok/burmilla-os-console/issues/1).*)
 
-(I'm a Debian user. I might update other consoles, but pull requests are welcome.)
+**Any other console('s Dockerfile) is not updated** from RancherOS v1.5.8.
+
+(I'm a Debian/Ubuntu user. I might update other consoles, but pull requests are welcome.)
 
 ## Notes on Debian console
 * based on non-slim image
@@ -86,6 +93,11 @@ runcmd:
   - /etc/init.d/generate-lsb-release start
 ```
 
+## Notes on Ubuntu console
+* [based on 22.04(jammy)](https://github.com/benok/burmilla-os-console/blob/master/images/10-ubuntuconsole/Dockerfile#L2)
+* Ubuntu official image is minimized, but not **unminimized** by intent. 
+  * You can (unminimize easily)[https://askubuntu.com/a/1329222/383021].
+
 ### See also (my tickets)
 * [Making console container customizable #126](https://github.com/burmilla/os/issues/126)
 * [Change of default sshd.config is not good #102](https://github.com/burmilla/os/issues/102)
@@ -93,13 +105,14 @@ runcmd:
 ---
 ## How to build your own console and use
 
-1. Clone this repository.
+1. Clone or fork this repository.
 2. Change [OS_REPO](https://github.com/benok/burmilla-os-console/commit/ce9e7f073012195d1b9fba1bef2e758050a9f97f) and [yaml's docker registry config](https://github.com/benok/burmilla-os-console/commit/dffea9b5f9717b845560e8366e3fc61dd99f29e0) to your Docker Hub account.
-3. make
-4. Change images/10-*console/Dockerfile
-5. Push all your images to Docker Hub.
+3. Change or Add images/10-(name)console/Dockerfile
+4. If you add new one, add (n*)/(name).yml (*first letter of new console name)
+5. Build with `make` and debug
+6. Push all your images to Docker Hub and test. (`ros console` can't specify tag, only `latest` image can be used.)
 ```sh
-$ docker image push [your-account]/os-xxxxconsole -a
+$ docker image push [your-account]/os-(name)console -a
 ```
 6. Push changes to github and follow "How to Use".(changing url is required, of course.)
 
