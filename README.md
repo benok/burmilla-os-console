@@ -29,6 +29,7 @@ With the above setting, you can find other consoles as like RancherOS.
 rancher@burmilla:~$ sudo ros console list
 disabled alpine
 disabled debian
+disabled debian_testing
 enabled default
 disabled fedora
 disabled ubuntu
