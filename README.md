@@ -70,7 +70,7 @@ Please use **'ros console enable'** and reboot.
 * ssh configuration is not changed from RancherOS's now. (I want to update this to recent Debian's default.)
 
 ## Notes for Ubuntu console
-* based on [latest](https://github.com/benok/burmilla-os-console/blob/master/images/10-ubuntuconsole/Dockerfile#L2)([22.04](https://hub.docker.com/_/ubuntu)).
+* based on [latest](https://github.com/benok/burmilla-os-console/blob/master/images/10-ubuntuconsole/Dockerfile#L2)([current latest](https://hub.docker.com/_/ubuntu)).
 * Ubuntu official image is minimized, but not **unminimized** by intent. 
   * You can (unminimize easily)[https://askubuntu.com/a/1329222/383021].
   
