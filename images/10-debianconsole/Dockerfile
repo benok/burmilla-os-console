@@ -6,9 +6,9 @@ COPY build/generate-lsb-release /etc/init.d/
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends iptables openssh-server rsync locales \
-                           sudo vim less curl ca-certificates psmisc htop kmod iproute2 \
+                           sudo less curl ca-certificates psmisc htop kmod iproute2 \
                            net-tools bash-completion wget \
-                           nano open-iscsi iputils-ping \
+                           nano open-iscsi iputils-ping vim-tiny \
     && update-alternatives --set iptables /usr/sbin/iptables-legacy \
     && update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy \
     && rm -rf /var/lib/apt/lists/* \
