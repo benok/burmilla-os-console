@@ -5,7 +5,7 @@ COPY build/sshd_config.append.tpl /etc/ssh/
 COPY build/generate-lsb-release /etc/init.d/
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends iptables openssh-server rsync locales \
+    && apt-get install -y --no-install-recommends fdisk iptables openssh-server rsync locales \
                            sudo vim less curl ca-certificates psmisc htop kmod iproute2 \
                            net-tools bash-completion iputils-ping wget \
                            apparmor \
