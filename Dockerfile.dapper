@@ -1,12 +1,19 @@
 FROM ubuntu:bionic
 # FROM arm64=arm64v8/ubuntu:bionic
 
-RUN apt-get update && \
-    apt-get install -y curl git wget unzip
+ARG APT_ARCHIVE_SOURCE="archive.ubuntu.com"
+
+RUN sed -i "s|archive.ubuntu.com|${APT_ARCHIVE_SOURCE}|" /etc/apt/sources.list \
+ && apt-get update \
+ && apt-get install -y \
+      curl \
+      git \
+      wget \
+      unzip
 
 ENV DAPPER_ENV VERSION DEV_BUILD
 ENV DAPPER_DOCKER_SOCKET true
-ENV DAPPER_SOURCE /go/src/github.com/rancher/os-images
+ENV DAPPER_SOURCE /go/src/github.com/burmilla/os-services
 ENV DAPPER_OUTPUT ./dist
 ENV DAPPER_RUN_ARGS --privileged
 ENV SHELL /bin/bash
@@ -18,12 +25,8 @@ ARG HOST_ARCH=${DAPPER_HOST_ARCH}
 ARG ARCH=${HOST_ARCH}
 
 ARG OS_REPO=benok
-ARG DOCKER_VERSION=1.10.3
-ARG DOCKER_PATCH_VERSION=v${DOCKER_VERSION}-ros1
-
-ARG DOCKER_URL_amd64=https://get.docker.com/builds/Linux/x86_64/docker-${DOCKER_VERSION}
-ARG DOCKER_URL_arm=https://github.com/rancher/docker/releases/download/${DOCKER_PATCH_VERSION}/docker-${DOCKER_VERSION}_arm
-ARG DOCKER_URL_arm64=https://github.com/rancher/docker/releases/download/${DOCKER_PATCH_VERSION}/docker-${DOCKER_VERSION}_arm64
+ARG DOCKER_URL_amd64=https://download.docker.com/linux/static/stable/x86_64/docker-26.1.4.tgz
+ARG DOCKER_URL_arm64=https://download.docker.com/linux/static/stable/aarch64/docker-26.1.4.tgz
 
 ARG IMAGE_BUILD_NAME=[1-9]*
 
@@ -50,14 +53,13 @@ ENV IMAGE_BUILD_NAME=${IMAGE_BUILD_NAME}
 RUN rm /bin/sh && \
     ln -s /bin/bash /bin/sh
 
-# Install Docker
-RUN curl -fL ${!DOCKER_URL} > /usr/bin/docker && \
+# Install Host Docker
+RUN curl -fL ${!DOCKER_URL} > /tmp/docker.tgz && \
+    tar zxvf /tmp/docker.tgz --strip-components=1 -C /usr/bin/ && \
     chmod +x /usr/bin/docker
 
 # Install dapper
-# sidestep https://github.com/rancher/dapper/issues/92 with v0.5.4
-ARG DAPPER_VERSION="v0.5.4"
-RUN curl -sL https://github.com/rancher/dapper/releases/download/${DAPPER_VERSION}/dapper-$(uname -s)-$(uname -m) > /usr/bin/dapper && \
+RUN curl -sL https://releases.rancher.com/dapper/v0.5.4/dapper-`uname -s`-`uname -m | sed 's/arm.*/arm/'` > /usr/bin/dapper && \
     chmod +x /usr/bin/dapper
 
 ENTRYPOINT ["./scripts/entry"]
