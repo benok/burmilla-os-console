@@ -5,11 +5,11 @@ COPY build/sshd_config.append.tpl /etc/ssh/
 COPY build/generate-lsb-release /etc/init.d/
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends fdisk iptables openssh-server rsync locales \
+    && apt-get install -y --no-install-recommends fdisk eject ipset iptables openssh-server rsync locales \
                            sudo less curl ca-certificates psmisc htop kmod iproute2 \
                            net-tools bash-completion wget \
                            nano open-iscsi iputils-ping vim-tiny \
-                           apparmor \
+                           apparmor nfs-common \
     && update-alternatives --set iptables /usr/sbin/iptables-legacy \
     && update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy \
     && rm -rf /var/lib/apt/lists/* \
