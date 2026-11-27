@@ -11,7 +11,7 @@ RUN sed -i "s|archive.ubuntu.com|${APT_ARCHIVE_SOURCE}|" /etc/apt/sources.list \
       wget \
       unzip
 
-ENV DAPPER_ENV VERSION DEV_BUILD
+ENV DAPPER_ENV VERSION DEV_BUILD NO_CACHE
 ENV DAPPER_DOCKER_SOCKET true
 ENV DAPPER_SOURCE /go/src/github.com/burmilla/os-services
 ENV DAPPER_OUTPUT ./dist

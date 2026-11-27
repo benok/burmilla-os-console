@@ -57,7 +57,21 @@ function build() {
             ${build_dir}/prebuild.sh "${version}" "${LOCALARCH}"
         fi
 
-        if dapper -d --build -f ${build_dir}/Dockerfile -- -t ${OS_REPO}/${name} ${build_dir}; then
+        BUILD_OPTS=""
+        if [ -n "${NO_CACHE}" ]; then
+            # drop the base alias tag created by dapper from "# FROM" line and re-pull upstream
+            base=$(sed -n 's/^FROM \(.*\)$/\1/p' ${build_dir}/Dockerfile | head -n 1)
+            upstream=$(sed -n "s/^# FROM .*${LOCALARCH}=\([^ ]*\).*/\1/p" ${build_dir}/Dockerfile | head -n 1)
+            if [ -n "${upstream}" ]; then
+                docker rmi -f "${base}" >/dev/null 2>&1 || true
+                docker pull "${upstream}"
+            else
+                BUILD_OPTS="--pull"
+            fi
+            BUILD_OPTS="${BUILD_OPTS} --no-cache"
+        fi
+
+        if dapper -d --build -f ${build_dir}/Dockerfile -- ${BUILD_OPTS} -t ${OS_REPO}/${name} ${build_dir}; then
             docker tag ${OS_REPO}/${name} ${tag}
             if [ "${name}" == "os-docker" ]; then
                 docker run --rm -it ${tag} /engine/docker version | grep Version
