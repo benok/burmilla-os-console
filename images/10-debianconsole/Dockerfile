@@ -35,7 +35,7 @@ RUN apt-get update \
     && echo > /etc/motd \
     \
     && addgroup --gid 1200 user-docker \
-    && adduser --system -u 1200 --gid 1200 --disabled-login --no-create-home user-docker \
+    && adduser --system --uid 1200 --gid 1200 --disabled-login --no-create-home user-docker \
     && echo 'user-docker:100000:65536' > /etc/subuid \
     && echo 'user-docker:100000:65536' > /etc/subgid
 
