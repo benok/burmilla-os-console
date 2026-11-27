@@ -1,5 +1,5 @@
 FROM benok/os-debianconsole-base
-# FROM amd64=debian:testing arm64=arm64v8/debian:testing
+# FROM amd64=debian:forky arm64=arm64v8/debian:forky
 
 COPY build/sshd_config.append.tpl /etc/ssh/
 COPY build/generate-lsb-release /etc/init.d/
