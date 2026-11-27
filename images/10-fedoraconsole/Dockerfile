@@ -1,5 +1,4 @@
-FROM benok/os-fedoraconsole-base
-# FROM amd64=fedora:latest arm64=arm64v8/fedora:latest
+FROM fedora:latest
 
 COPY prompt.sh /etc/profile.d/
 COPY build/sshd_config.append.tpl /etc/ssh/

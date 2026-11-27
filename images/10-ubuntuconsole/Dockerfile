@@ -1,5 +1,4 @@
-FROM benok/os-ubuntuconsole-base
-# FROM amd64=ubuntu:latest arm64=arm64v8/ubuntu:latest
+FROM ubuntu:latest
 
 COPY build/sshd_config.append.tpl /etc/ssh/
 COPY build/generate-lsb-release /etc/init.d/

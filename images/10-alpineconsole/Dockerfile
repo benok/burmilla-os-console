@@ -1,5 +1,4 @@
-FROM benok/os-alpineconsole-base
-# FROM amd64=alpine:latest arm64=arm64v8/alpine:latest
+FROM alpine:latest
 
 COPY build/sshd_config.append.tpl /etc/ssh/
 
