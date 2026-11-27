@@ -1,5 +1,5 @@
 FROM benok/os-debianconsole-base
-# FROM amd64=debian:buster arm64=arm64v8/debian:buster
+# FROM amd64=debian:trixie arm64=arm64v8/debian:trixie
 
 COPY build/sshd_config.append.tpl /etc/ssh/
 COPY build/generate-lsb-release /etc/init.d/
