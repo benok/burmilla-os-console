@@ -1,0 +1,191 @@
+name: Build console images
+
+on:
+  workflow_dispatch:
+    inputs:
+      console:
+        description: Console to build
+        type: choice
+        default: all
+        options: [all, alpine, debian, debian_testing, fedora, ubuntu]
+      no_cache:
+        description: Build without cache (fresh package upgrades)
+        type: boolean
+        default: false
+  schedule:
+    # daily: rebuild consoles whose upstream base image digest changed
+    - cron: "17 3 * * *"
+  push:
+    branches: [master]
+    paths:
+      - "images/**"
+      - ".github/**"
+  pull_request:
+    paths:
+      - "images/**"
+      - ".github/**"
+
+env:
+  DOCKERHUB_PREFIX: docker.io/benok/os-
+  GHCR_PREFIX: ghcr.io/benok/os-
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-24.04
+    outputs:
+      consoles: ${{ steps.plan.outputs.consoles }}
+      publish: ${{ steps.plan.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          CONSOLE: ${{ inputs.console }}
+          NO_CACHE: ${{ inputs.no_cache }}
+          BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          REPO_PREFIX: ${{ env.DOCKERHUB_PREFIX }}
+        run: |
+          consoles=$(.github/scripts/plan.sh)
+          echo "consoles=${consoles}" >> "$GITHUB_OUTPUT"
+          echo "publish=${{ github.event_name != 'pull_request' }}" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Consoles to build"
+            echo '```json'
+            jq . <<< "${consoles}"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  build:
+    needs: prepare
+    if: needs.prepare.outputs.consoles != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        console: ${{ fromJSON(needs.prepare.outputs.consoles) }}
+        # add/remove architectures here
+        platform:
+          - { name: linux/amd64, arch: amd64, runner: ubuntu-24.04 }
+          - { name: linux/arm64, arch: arm64, runner: ubuntu-24.04-arm }
+    runs-on: ${{ matrix.platform.runner }}
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prebuild
+        run: |
+          if [ -x images/${{ matrix.console.dir }}/prebuild.sh ]; then
+            images/${{ matrix.console.dir }}/prebuild.sh
+          fi
+
+      - uses: docker/setup-buildx-action@v3
+
+      - if: needs.prepare.outputs.publish == 'true'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - if: needs.prepare.outputs.publish == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: images/${{ matrix.console.dir }}
+          platforms: ${{ matrix.platform.name }}
+          # pin the base to the digest resolved in "prepare" so all arches use the same upstream
+          build-contexts: |
+            ${{ matrix.console.upstream }}=docker-image://${{ matrix.console.upstream }}@${{ matrix.console.digest }}
+          labels: |
+            org.opencontainers.image.base.name=docker.io/library/${{ matrix.console.upstream }}
+            org.opencontainers.image.base.digest=${{ matrix.console.digest }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.version=${{ matrix.console.version }}
+          no-cache: ${{ matrix.console.no_cache }}
+          cache-from: ${{ !matrix.console.no_cache && format('type=gha,scope={0}-{1}', matrix.console.name, matrix.platform.arch) || '' }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.console.name }}-${{ matrix.platform.arch }}
+          provenance: false
+          outputs: >-
+            type=image,"name=${{ env.DOCKERHUB_PREFIX }}${{ matrix.console.name }}console,${{ env.GHCR_PREFIX }}${{ matrix.console.name }}console",push-by-digest=true,name-canonical=true,push=${{ needs.prepare.outputs.publish }}
+
+      - if: needs.prepare.outputs.publish == 'true'
+        name: Export digest
+        run: |
+          mkdir -p ${{ runner.temp }}/digests
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${digest#sha256:}"
+
+      - if: needs.prepare.outputs.publish == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.console.name }}-${{ matrix.platform.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge:
+    needs: [prepare, build]
+    if: needs.prepare.outputs.publish == 'true' && needs.prepare.outputs.consoles != '[]'
+    strategy:
+      fail-fast: false
+      matrix:
+        console: ${{ fromJSON(needs.prepare.outputs.consoles) }}
+    runs-on: ubuntu-24.04
+    # serialize tag updates per console (e.g. schedule vs push)
+    concurrency:
+      group: publish-${{ matrix.console.name }}console
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ matrix.console.name }}-*
+          merge-multiple: true
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push manifest lists
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          NAME: ${{ matrix.console.name }}console
+          VERSION: ${{ matrix.console.version }}
+        run: |
+          src="${DOCKERHUB_PREFIX}${NAME}"
+          tags=()
+          for prefix in "${DOCKERHUB_PREFIX}" "${GHCR_PREFIX}"; do
+            # "_arm64" aliases: Burmilla resolves ${SUFFIX}=_arm64 on arm64 hosts
+            for t in "${VERSION}" latest "${VERSION}_arm64" latest_arm64; do
+              tags+=(-t "${prefix}${NAME}:${t}")
+            done
+          done
+          docker buildx imagetools create "${tags[@]}" $(printf "${src}@sha256:%s " *)
+          docker buildx imagetools inspect "${src}:${VERSION}"
+          echo "Published ${NAME}:${VERSION} (+latest, _arm64)" >> "$GITHUB_STEP_SUMMARY"
